@@ -1,0 +1,11 @@
+id,name,position,team,market_value_usd,passes,pass_accuracy,shots,shots_on_target,saves,fouls,yellow_cards,red_cards
+1,Lionel Messi,Forward,Inter Miami,50000000,1200,92.5,150,85,0,10,2,0
+2,Emiliano Martinez,Goalkeeper,Aston Villa,30000000,250,84.3,1,0,120,2,1,0
+3,Cristian Romero,Defender,Tottenham Hotspur,35000000,850,89.0,10,3,15,20,6,1
+4,Nicolas Otamendi,Defender,Benfica,20000000,900,88.2,5,1,10,18,5,0
+5,Enzo Fernandez,Midfielder,Chelsea,60000000,1600,91.8,25,12,0,14,2,0
+6,Rodrigo De Paul,Midfielder,Atletico Madrid,45000000,1450,90.1,30,14,0,16,3,0
+7,Julian Alvarez,Forward,Manchester City,70000000,780,87.6,85,42,0,12,1,0
+8,Lautaro Martinez,Forward,Inter Milan,65000000,690,86.9,100,50,0,14,2,0
+9,Alexis Mac Allister,Midfielder,Liverpool,55000000,1320,89.7,20,9,0,10,1,0
+10,Nahuel Molina,Defender,Atletico Madrid,25000000,740,85.5,15,6,0,13,2,0
