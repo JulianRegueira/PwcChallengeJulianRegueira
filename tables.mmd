@@ -1,50 +1,71 @@
 erDiagram
     PLAYER_DIMENSION {
-      int player_id PK
-      string name
-      string position
-      string team
+      player_id int PK
+      name       string
+      position   string
+      team       string
     }
     PERFORMANCE_DIMENSION {
-      int performance_id PK
-      int passes
-      float pass_accuracy
-      int shots
-      int shots_on_target
-      int saves
+      performance_id   int PK
+      passes           int
+      pass_accuracy    float
+      shots            int
+      shots_on_target  int
+      saves            int
     }
     DISCIPLINE_DIMENSION {
-      int discipline_id PK
-      int fouls
-      int yellow_cards
-      int red_cards
+      discipline_id    int PK
+      fouls            int
+      yellow_cards     int
+      red_cards        int
     }
     VALUE_DIMENSION {
-      int value_id PK
-      float market_value_usd
-      float exchange_rate
-      float market_value_ars
+      value_id            int PK
+      market_value_usd    float
+      exchange_rate       float
+      market_value_ars    float
     }
     DATE_DIMENSION {
-      int date_id PK
-      date date
-      string day_of_week
-      string month
-      int year
+      date_id      int PK
+      date         date
+      day_of_week  string
+      month        string
+      year         int
+    }
+    MATCH_DIMENSION {
+      match_id     int PK
+      date_id      int FK
+      opponent     string
+      competition  string
+      home_away    string
     }
     FACT_PLAYER_PERFORMANCE {
-      int fact_id PK
-      int player_id FK
-      int performance_id FK
-      int discipline_id FK
-      int value_id FK
-      int date_id FK
-      float composite_score
-      int ranking
+      fact_id           int PK
+      player_id         int FK
+      performance_id    int FK
+      discipline_id     int FK
+      value_id          int FK
+      date_id           int FK
+      composite_score   float
+      ranking           int
+    }
+    PLAYER_MATCH_FACT {
+      fact_id           int PK
+      match_id          int FK
+      player_id         int FK
+      minutes_played    int
+      goals             int
+      assists           int
+      passes            int
+      shots_on_target   int
     }
 
-    FACT_PLAYER_PERFORMANCE }|--|| PLAYER_DIMENSION      : "player_id → player_id"
-    FACT_PLAYER_PERFORMANCE }|--|| PERFORMANCE_DIMENSION : "performance_id → performance_id"
-    FACT_PLAYER_PERFORMANCE }|--|| DISCIPLINE_DIMENSION  : "discipline_id → discipline_id"
-    FACT_PLAYER_PERFORMANCE }|--|| VALUE_DIMENSION       : "value_id → value_id"
-    FACT_PLAYER_PERFORMANCE }|--|| DATE_DIMENSION        : "date_id → date_id"
+    FACT_PLAYER_PERFORMANCE ||--|| PLAYER_DIMENSION      : "player_id → player_id"
+    FACT_PLAYER_PERFORMANCE ||--|| PERFORMANCE_DIMENSION : "performance_id → performance_id"
+    FACT_PLAYER_PERFORMANCE ||--|| DISCIPLINE_DIMENSION  : "discipline_id → discipline_id"
+    FACT_PLAYER_PERFORMANCE ||--|| VALUE_DIMENSION       : "value_id → value_id"
+    FACT_PLAYER_PERFORMANCE ||--|| DATE_DIMENSION        : "date_id → date_id"
+
+    MATCH_DIMENSION ||--|| DATE_DIMENSION              : "date_id → date_id"
+    PLAYER_MATCH_FACT ||--|| MATCH_DIMENSION           : "match_id → match_id"
+    PLAYER_MATCH_FACT ||--|| PLAYER_DIMENSION          : "player_id → player_id"
