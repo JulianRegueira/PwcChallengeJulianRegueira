@@ -1,0 +1,25 @@
+flowchart TD
+    subgraph Sources["Sources"]
+      S1["AI Telemetry Streams"]
+      S2["Live APIs"]
+      S3["Legacy Files"]
+    end
+
+    subgraph DataLake["Data Lake"]
+      Bronze["Bronze Zone\n(Raw Landing)"]
+      Silver["Silver Zone\n(Cleansed Tables)"]
+      Gold["Gold Zone\n(Star Schema DW)"]
+    end
+
+    subgraph Consume["Consumption"]
+      API["FastAPI Endpoints"]
+      BI["BI Dashboards"]
+      ML["ML Model Training"]
+    end
+
+    S1 & S2 & S3 --> Bronze
+    Bronze --> Silver
+    Silver --> Gold
+    Gold --> API
+    Gold --> BI
+    Gold --> ML

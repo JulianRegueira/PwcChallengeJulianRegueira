@@ -1,0 +1,24 @@
+flowchart LR
+    subgraph Bronze["Bronze (Raw Ingestion)"]
+      A1["AI Live Match Feeds\n(Telemetry, Events, Stats)"]
+      A2["Third-Party APIs\n(e.g. Opta, StatsBomb)"]
+      A3["Legacy CSV/JSON Files"]
+      A1 & A2 & A3 --> B([Raw Landing Zone])
+    end
+
+    subgraph Silver["Silver (Cleansing & Enrichment)"]
+      B --> C1["Parsing & Typing"]
+      C1 --> C2["Data Standardization"]
+      C2 --> C3["Missing Value Handling"]
+      C3 --> C4["Schema Validation"]
+      C4 --> D([Silver Tables])
+    end
+
+    subgraph Gold["Gold (Analytics Layer)"]
+      D --> E1["Fact: Match Performance"]
+      D --> E2["Dim: Player"]
+      D --> E3["Dim: Team"]
+      D --> E4["Dim: Event Type"]
+      D --> E5["Dim: Time"]
+      E1 & E2 & E3 & E4 & E5 --> F([Star Schema])
+    end

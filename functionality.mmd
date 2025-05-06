@@ -1,0 +1,57 @@
+flowchart TD
+  %% Data Origin
+  subgraph Sources["Data Sources"]
+    S1["Bronze Upload\n(CSV/JSON/PDF)"]
+    S2["External APIs\n(e.g. Dolarapi)"]
+  end
+
+  %% Bronze Layer
+  subgraph Bronze["Bronze Layer\n(Raw Landing)"]
+    B1["Save file under /bronze\nwith timestamp"]
+  end
+
+  %% Silver Layer ETL
+  subgraph Silver["Silver Layer\n(Clean & Load)"]
+    B1 --> E1["load_csv_to_silver.py"]
+    E1 --> D1["Read /bronze/argentina_players.csv\nwith pandas"]
+    D1 --> D2["SQLModel.metadata.create_all(silver.db)"]
+    D2 --> D3["Insert Player rows into silver.db"]
+    D3 --> SilverTable["Table: player\nin silver.db"]
+  end
+
+  %% Gold Layer ETL
+  subgraph Gold["Gold Layer\n(Star Schema + Views)"]
+    SilverTable --> G1["silver_to_gold.py"]
+    G1 --> G2["Extract all Player rows via repository"]
+    G2 --> G3["build_dimensions():\n• PlayerDimension\n• PerformanceDimension\n• DisciplineDimension\n• ValueDimension\n• DateDimension"]
+    G3 --> G4["build_facts():\n• FactPlayerPerformance"]
+    G4 --> G5["SQLModel.metadata.create_all(gold.db)\n(persist dims & facts)"]
+    G5 --> GoldTables["Tables in gold.db:\n playerdimension,\n performancedimension,\n disciplinedimension,\n valuedimension,\n datedimension,\n factplayerperformance"]
+    G5 --> G6["create_top_players_view():\n Truncate & populate topplayers"]
+    G6 --> TopView["Table: topplayers\n(simulated materialized view)"]
+  end
+
+  %% Vector DB indexing
+  subgraph VectorDB["Vector DB\n(Typesense Container)"]
+    G5 & SilverTable --> V1["API Startup Event"]
+    V1 --> V2["Create 'players' collection\nor recreate if exists"]
+    V2 --> V3["Import documents from silver.db\nvia repo/select"]
+    V3 --> V4["Fuzzy-search index ready"]
+  end
+
+  %% API Consumption
+  subgraph API["FastAPI Endpoints"]
+    V4 --> A1["GET /players/search\n(name fuzzy + filters)"]
+    TopView --> A2["GET /players/top\n(precomputed view)"]
+    GoldTables --> A3["GET /players/ranking\n(top N from fact table)"]
+    SilverTable --> A4["GET /players/{id}\nCRUD endpoints"]
+    SilverTable --> A5["POST /players/\nbatch create"]
+    SilverTable --> A6["DELETE /players/{id}"]
+    SilverTable & S2 --> A7["GET /players/{id}/price-ars\n(external Dolarapi enrichment)"]
+  end
+
+  %% Clientes finales
+  subgraph Clients["Clients / BI / ML"]
+    A1 & A2 & A3 & A4 & A7 --> C1["Web UI / BI Dashboards\nAnalysts & Stakeholders"]
+    A1 & A2 & A3 --> C2["ML Pipelines\n(feature engineering\n& model training)"]
+  end
